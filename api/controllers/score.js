@@ -6,35 +6,35 @@ const scoreAi = require('./../schema/scoreDefinition').mdbCounterScoreSchema
 const statusAppCode = require('./../config/status').statusAppCrud
 const statusErrCode = require('./../config/status').errorApp
 var statusResp = null
-// const {convertAny,convertLower} = require('./../helper/lower')
+const {convertAny,convertLower} = require('./../helper/lower')
 
 
-// async function create(req, res) {
-//     const scoreDetails = _.pick(req.body, ['userid'])
-//     const { validateScore } = require('../validation/scoreValidation')
-//     const { error } = validateScore(scoreDetails)
-//     if(error){
-//         const statusErrValidation = statusErrCode('validation')
-//         return response.bad_app(error,statusErrValidation.code,res)
-//     } 
-//     const scoreIncrement = await scoreAi.findByIdAndUpdate({_id: 'score'}, {$inc: { seq: 1}});
-//     if(!scoreIncrement){
-//         const statusErrInc = statusErrCode('inc')
-//         return response.bad_app(statusResp,statusErrInc.code,res)
-//     } 
-//     scoreDetails["_id"] = scoreIncrement.seq
+async function create(req, res) {
+    const scoreDetails = _.pick(req.body, ['userid'])
+    const { validateScore } = require('../validation/scoreValidation')
+    const { error } = validateScore(scoreDetails)
+    if(error){
+        const statusErrValidation = statusErrCode('validation')
+        return response.bad_app(error,statusErrValidation.code,res)
+    } 
+    const scoreIncrement = await scoreAi.findByIdAndUpdate({_id: 'score'}, {$inc: { seq: 1}});
+    if(!scoreIncrement){
+        const statusErrInc = statusErrCode('inc')
+        return response.bad_app(statusResp,statusErrInc.code,res)
+    } 
+    scoreDetails["_id"] = scoreIncrement.seq
 
-//     try {
-//         const docScore =  new req.crudder(scoreDetails)
-//         await docScore.save()
-//         const statusApp = statusAppCode('success')
-//         return response.success_app(statusApp.message,statusApp.code,res)
-//     } catch (error) {
-//         const statusErrDb = statusErrCode('errdb')
-//         return response.bad_app(statusResp,statusErrDb.code,res)
-//     }
+    try {
+        const docScore =  new req.crudder(scoreDetails)
+        await docScore.save()
+        const statusApp = statusAppCode('success')
+        return response.success_app(statusApp.message,statusApp.code,res)
+    } catch (error) {
+        const statusErrDb = statusErrCode('errdb')
+        return response.bad_app(statusResp,statusErrDb.code,res)
+    }
     
-// }
+}
 async function checkUser(req, res) {
     const scoreDetails = _.pick(req.body, ['userid'])
     const { validateScore } = require('../validation/scoreValidation')
@@ -106,7 +106,7 @@ async function detail(req, res) {
 
 
 module.exports = {
-    // create: create,
+    create: create,
     checkUser:checkUser,
     list: list,
     detail:detail
